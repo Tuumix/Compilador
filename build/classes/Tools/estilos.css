@@ -1,0 +1,27 @@
+.parentese
+{
+    -fx-fill: pink;
+}
+.string
+{
+    -fx-fill: #bd93f9;
+}
+.comando
+{
+    -fx-fill: red;
+}
+.declaracao
+{
+    -fx-fill: blueviolet;
+}
+.operacao
+{
+    -fx-fill: purple;
+}
+.colchete{
+    -fx-fill: aqua;
+}
+.comentario
+{
+    -fx-fill: pink;
+}
