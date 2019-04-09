@@ -16,7 +16,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="709.0" prefWidth="1045.0" style="-fx-background-color: #282a36#282a36;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="compilador.FXMLDocumentController">
    <children>
-      <CodeArea fx:id="cdArea" layoutX="14.0" layoutY="75.0" prefHeight="457.0" prefWidth="535.0" style="-fx-border-color: #ff79c6#ff79c6; -fx-background-color: #f8f8f2#f8f8f2;">
+      <CodeArea fx:id="cdArea" layoutX="14.0" layoutY="75.0" prefHeight="457.0" prefWidth="488.0" style="-fx-border-color: #ff79c6#ff79c6; -fx-background-color: #f8f8f2#f8f8f2;">
          <effect>
             <ColorAdjust />
          </effect></CodeArea>
@@ -48,16 +48,16 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <TableView fx:id="tabela" layoutX="560.0" layoutY="77.0" prefHeight="455.0" prefWidth="471.0" />
-      <TextArea fx:id="erro_sin" layoutX="14.0" layoutY="570.0" prefHeight="130.0" prefWidth="482.0" />
+      <TableView fx:id="tabela" layoutX="514.0" layoutY="75.0" prefHeight="457.0" prefWidth="517.0" style="-fx-border-color: #ff79c6#ff79c6 #ff79c6#ff79c6;" />
+      <TextArea fx:id="erro_sin" layoutX="14.0" layoutY="570.0" prefHeight="130.0" prefWidth="500.0" />
       <Button layoutX="29.0" layoutY="33.0" mnemonicParsing="false" onAction="#btnCompilar" text="Compilar" />
-      <TextArea fx:id="erro_lexico" layoutX="527.0" layoutY="571.0" prefHeight="128.0" prefWidth="482.0" />
-      <Label layoutX="196.0" layoutY="541.0" text="Analise Sintatica" textFill="WHITE">
+      <TextArea fx:id="erro_lexico" layoutX="534.0" layoutY="569.0" prefHeight="130.0" prefWidth="500.0" />
+      <Label layoutX="15.0" layoutY="540.0" text="Analise Sintatica" textFill="WHITE">
          <font>
             <Font size="21.0" />
          </font>
       </Label>
-      <Label layoutX="679.0" layoutY="540.0" text="Analise Lexico" textFill="WHITE">
+      <Label layoutX="537.0" layoutY="536.0" text="Analise Lexico" textFill="WHITE">
          <font>
             <Font size="21.0" />
          </font>

@@ -96,6 +96,8 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private TextArea erro_sin;
+    @FXML
+    private TextArea erro_lexico;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
