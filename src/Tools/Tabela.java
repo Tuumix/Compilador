@@ -11,15 +11,17 @@ package Tools;
  */
 public class Tabela {
     private String token;
-    private String exemplo;
+    private String lexema;
     private int linha;
     private String tipo;
+    private String valor;
 
-    public Tabela(String token, String exemplo, int linha, String tipo) {
+    public Tabela(String token, String lexema, int linha, String tipo, String valor) {
         this.token = token;
-        this.exemplo = exemplo;
+        this.lexema = lexema;
         this.linha = linha;
         this.tipo = tipo;
+        this.valor = valor;
     }
 
     public String getToken() {
@@ -30,12 +32,12 @@ public class Tabela {
         this.token = token;
     }
 
-    public String getExemplo() {
-        return exemplo;
+    public String getLexema() {
+        return lexema;
     }
 
-    public void setExemplo(String exemplo) {
-        this.exemplo = exemplo;
+    public void setLexema(String lexema) {
+        this.lexema = lexema;
     }
 
     public int getLinha() {
@@ -52,6 +54,14 @@ public class Tabela {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
     }
     
     

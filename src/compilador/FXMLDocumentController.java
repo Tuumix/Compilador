@@ -56,6 +56,7 @@ public class FXMLDocumentController implements Initializable {
     private static final String line_pattern = "\".*[0-9].*\"";
     private static final String declaracao = "\\bint\\b|\\bdouble\\b|\\<=|\\>=|\\=";
     private static final String comentario = "\\${1}.*\\${1}";
+    private static final String inicio_fim = "\\bbegin\\b|\\bend\\b";
 
     private static final String group_tecla = "KEYWORD";
     private static final String group_parentese = "PAREN";
@@ -66,6 +67,7 @@ public class FXMLDocumentController implements Initializable {
     private static final String GROUP_COMMENT = "COMMENT";
     private static final String group_comando = "COMMAND";
     private static final String group_dec = "declaracao";
+    private static final String group_inifim = "inicio_fim";
 
     private static final Pattern HIGHLIGHT_PATTERN = Pattern.compile(
             "(?<" + group_tecla + ">" + comandos_padrao + ")"
@@ -76,6 +78,8 @@ public class FXMLDocumentController implements Initializable {
             + "|(?<" + group_string + ">" + string_padrao + ")"
             + "|(?<" + group_comando + ">" + operacao_padrao + ")"
             + "|(?<" + GROUP_COMMENT + ">" + comentario + ")"
+            + "|(?<" + group_dec + ">" + declaracao + ")"
+    //+ "|(?<" + group_inifim + ">" + inicio_fim + ")"
     );
 
     private static final String CSS_COMMENT = "comment";
@@ -109,8 +113,16 @@ public class FXMLDocumentController implements Initializable {
         TableColumn tipo = new TableColumn("Tipo");
         tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        tabela.getColumns().addAll(token, lexema, linha, tipo);
-        token.setMaxWidth(123);
+        TableColumn valor = new TableColumn("Valor");
+        valor.setCellValueFactory(new PropertyValueFactory<>("valor"));
+
+        tabela.getColumns().addAll(token, lexema, linha, tipo, valor);
+
+        token.setMaxWidth(150);
+        lexema.setMaxWidth(150);
+        linha.setMaxWidth(150);
+        tipo.setMaxWidth(150);
+
         insercao_tokens();
         InicializaTextColor();
 
@@ -148,7 +160,8 @@ public class FXMLDocumentController implements Initializable {
                     : matcher.group(GROUP_DOT) != null ? CSS_DOT
                     : matcher.group(group_string) != null ? "string"
                     : matcher.group(GROUP_COMMENT) != null ? "comentario"
-                    //: matcher.group(group_comando) != null ? "operacao"
+                    : matcher.group(group_dec) != null ? "declaracao"
+                    //: matcher.group(group_inifim) != null ? "ini_fim"
                     : null;
             spansBuilder.add(new ArrayList<String>(), matcher.start() - lastMatchEnd);
             spansBuilder.add(new ArrayList<String>(Arrays.asList(styleClass)), matcher.end() - matcher.start());
@@ -208,7 +221,7 @@ public class FXMLDocumentController implements Initializable {
     public void insere_tabela() {
         String codigo = cdArea.getText();
         codigo = codigo.replaceAll("\\${1}.*\\${1}", "");
-
+        String valor = "-";
         String[] linha = codigo.split("\n");
         String[] coluna;
         Boolean entrou = false;
@@ -219,33 +232,36 @@ public class FXMLDocumentController implements Initializable {
                 coluna = linha[i].split((" "));
                 lin = i + 1;
                 for (int j = 0; j < coluna.length; j++) {
+                    if (coluna[j].matches(declaracao)) {
+                        valor = coluna[j];
+                    }
                     entrou = false;
                     for (int k = 0; k < comand_list.size(); k++) {
                         if (coluna[j].contentEquals(comand_list.get(k).getComando())) {
-                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo()));
+                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), valor));
                             entrou = true;
                         }
                     }
                     if (!entrou && coluna[j].matches("^[a-zA-Z]+$")) {
-                        tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel"));
+                        tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", valor));
                     }
 
                     if (coluna[j].contains(";")) {
                         coluna[j] = coluna[j].replace(";", "");
                         if (coluna[j].contains(".")) {
-                            tabela.getItems().add(new Tabela("token_id_float", coluna[j], lin, "double"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula"));
+                            tabela.getItems().add(new Tabela("token_id_float", coluna[j], lin, "valor decimal", valor));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", valor));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "id"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula"));
+                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "valor real", valor));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", valor));
                         }
 
                     }
 
                     if (coluna[j].matches("\\d+")) {
-                        tabela.getItems().add(new Tabela("token_id_num", coluna[j], lin, "numero"));
+                        tabela.getItems().add(new Tabela("token_id_num", coluna[j], lin, "numero", valor));
                     }
-
+                    valor = "-";
                 }
             }
         } catch (Exception e) {
@@ -255,7 +271,6 @@ public class FXMLDocumentController implements Initializable {
 
     public void analise_sintatica() {
     }
-    
 
     @FXML
     private void btnCompilar(ActionEvent event) {
