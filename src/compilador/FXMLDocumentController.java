@@ -100,8 +100,8 @@ public class FXMLDocumentController implements Initializable {
         TableColumn token = new TableColumn("Token");
         token.setCellValueFactory(new PropertyValueFactory<>("token"));
 
-        TableColumn exemplo = new TableColumn("Exemplo");
-        exemplo.setCellValueFactory(new PropertyValueFactory<>("exemplo"));
+        TableColumn lexema = new TableColumn("Lexema");
+        lexema.setCellValueFactory(new PropertyValueFactory<>("lexema"));
 
         TableColumn linha = new TableColumn("Linha");
         linha.setCellValueFactory(new PropertyValueFactory<>("linha"));
@@ -109,7 +109,7 @@ public class FXMLDocumentController implements Initializable {
         TableColumn tipo = new TableColumn("Tipo");
         tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        tabela.getColumns().addAll(token, exemplo, linha, tipo);
+        tabela.getColumns().addAll(token, lexema, linha, tipo);
         token.setMaxWidth(123);
         insercao_tokens();
         InicializaTextColor();
@@ -255,6 +255,7 @@ public class FXMLDocumentController implements Initializable {
 
     public void analise_sintatica() {
     }
+    
 
     @FXML
     private void btnCompilar(ActionEvent event) {
