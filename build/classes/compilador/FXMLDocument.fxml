@@ -48,7 +48,7 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <TableView fx:id="tabela" layoutX="514.0" layoutY="77.0" prefHeight="455.0" prefWidth="517.0" />
+      <TableView fx:id="tabela" layoutX="514.0" layoutY="75.0" prefHeight="457.0" prefWidth="517.0" style="-fx-border-color: #ff79c6#ff79c6 #ff79c6#ff79c6;" />
       <TextArea fx:id="erro_sin" layoutX="14.0" layoutY="570.0" prefHeight="130.0" prefWidth="500.0" />
       <Button layoutX="29.0" layoutY="33.0" mnemonicParsing="false" onAction="#btnCompilar" text="Compilar" />
       <TextArea fx:id="erro_lexico" layoutX="534.0" layoutY="569.0" prefHeight="130.0" prefWidth="500.0" />
