@@ -38,6 +38,13 @@ public class Compilador extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+        //System.out.println(rec("",5));
+    }
+    
+    public static String rec(String e, int pos){
+        if(pos == e.length())
+            return e;
+        return rec(e+"e",pos);
     }
     
 }

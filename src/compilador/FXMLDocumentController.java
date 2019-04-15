@@ -273,13 +273,29 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void analise_sintatica() {
+    public String analise_sintatica(String erro, int pos) {
+        String ant = tabela.getItems().get(pos).getLexema();
+        String prox = tabela.getItems().get(pos+1).getLexema();
+        if(ant.equals("while"))
+        {
+            if(prox.equals("("))
+                return analise_sintatica(erro, pos+1);
+            else
+            {
+                erro += "Falta de parenteses";
+                return analise_sintatica(erro, pos+1);
+            }
+        }
+        //sSystem.out.println(""+erro);
+        return erro;
     }
 
     @FXML
     private void btnCompilar(ActionEvent event) {
+        String erro = "";
         tabela.getItems().clear();
         insere_tabela();
-        analise_sintatica();
+        erro_lexico.setText(analise_sintatica(erro,0));
+        System.out.println(""+erro);
     }
 }
