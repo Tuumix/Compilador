@@ -47,7 +47,7 @@ public class FXMLDocumentController implements Initializable {
     };
 
     private static final String comandos_padrao = String.join("|", Comandos);
-    private static final String operacao_padrao = "\\<|\\>|\\<=|\\>=|\\=";
+    private static final String operacao_padrao = "\\<|\\>|\\<=|\\>=|\\=|\\==";
     private static final String parenteses_padrao = "\\(|\\)";
     private static final String chave_padrao = "\\{|\\}";
     private static final String colchete_padrao = "\\[|\\]";
@@ -242,7 +242,7 @@ public class FXMLDocumentController implements Initializable {
                         }
                     }
                     if (!entrou && coluna[j].matches("^[a-zA-Z]+$")) {
-                        System.out.println(""+coluna[j]);
+                        System.out.println("" + coluna[j]);
                         if (coluna[j + 1].equals("=")) {
                             tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", "")));
                         } else {
@@ -273,18 +273,42 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    public String enquanto(int pos) {
+        String ant = tabela.getItems().get(pos).getLexema();
+        String prox = tabela.getItems().get(pos + 1).getLexema();
+
+        if (!ant.equals("(")) {
+            if (!prox.matches("^[a-zA-Z]+$")) {
+                ant = tabela.getItems().get(pos + 2).getLexema();
+                prox = tabela.getItems().get(pos + 3).getLexema();
+                if (!ant.matches(operacao_padrao)) {
+                    //ok
+                    if (prox.matches("^[a-zA-Z]+$")) {
+                        //ok
+                        ant = tabela.getItems().get(pos + 3).getLexema();
+                        prox = tabela.getItems().get(pos + 4).getLexema();
+                        
+                    }
+                }
+            }
+        } else {
+
+        }
+        return "";
+    }
+
     public String analise_sintatica(String erro, int pos) {
         String ant = tabela.getItems().get(pos).getLexema();
-        String prox = tabela.getItems().get(pos+1).getLexema();
-        if(ant.equals("while"))
-        {
-            if(prox.equals("("))
+        //String prox = tabela.getItems().get(pos+1).getLexema();
+        if (ant.equals("while")) {
+            erro += enquanto(pos + 1);
+            /*if(prox.equals("("))
                 return analise_sintatica(erro, pos+1);
             else
             {
                 erro += "Falta de parenteses";
                 return analise_sintatica(erro, pos+1);
-            }
+            }*/
         }
         //sSystem.out.println(""+erro);
         return erro;
@@ -295,7 +319,7 @@ public class FXMLDocumentController implements Initializable {
         String erro = "";
         tabela.getItems().clear();
         insere_tabela();
-        erro_lexico.setText(analise_sintatica(erro,0));
-        System.out.println(""+erro);
+        erro_lexico.setText(analise_sintatica(erro, 0));
+        System.out.println("" + erro);
     }
 }
