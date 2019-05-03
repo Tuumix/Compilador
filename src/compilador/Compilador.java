@@ -15,6 +15,7 @@ import javafx.stage.Stage;
  *
  * @author hiroshi
  */
+
 public class Compilador extends Application {
     
     @Override

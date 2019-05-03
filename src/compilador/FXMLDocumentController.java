@@ -24,8 +24,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -223,7 +221,7 @@ public class FXMLDocumentController implements Initializable {
     public void insere_tabela() {
         String codigo = cdArea.getText();
         codigo = codigo.replaceAll("\\${1}.*\\${1}", "");
-        String valor = "-";
+        String valor = "-", aux;
         String[] linha = codigo.split("\n");
         String[] coluna;
         Boolean entrou = false;
@@ -252,20 +250,20 @@ public class FXMLDocumentController implements Initializable {
                     }
 
                     if (coluna[j].contains(";")) {
-                        coluna[j] = coluna[j].replace(";", "");
+                        aux = coluna[j].replace(";", "");
                         if (coluna[j].contains(".")) {
-                            tabela.getItems().add(new Tabela("token_id_float", coluna[j], lin, "valor decimal", "-"));
+                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-"));
                             tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-"));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "valor real", "-"));
+                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-"));
                             tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-"));
                         }
-
                     }
 
                     if (coluna[j].matches("\\d+")) {
-                        tabela.getItems().add(new Tabela("token_id_num", coluna[j], lin, "numero", valor));
+                        tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-"));
                     }
+
                 }
             }
         } catch (Exception e) {
@@ -273,45 +271,47 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public String enquanto(int pos) {
+    public String enquanto(int pos, String erro) {
         String ant = tabela.getItems().get(pos).getLexema();
         String prox = tabela.getItems().get(pos + 1).getLexema();
 
-        if (!ant.equals("(")) {
-            if (!prox.matches("^[a-zA-Z]+$")) {
+        if (ant.equals("(")) {
+            if (prox.matches("^[a-zA-Z]+$") || prox.matches("\\d+")) {
                 ant = tabela.getItems().get(pos + 2).getLexema();
                 prox = tabela.getItems().get(pos + 3).getLexema();
-                if (!ant.matches(operacao_padrao)) {
-                    //ok
-                    if (prox.matches("^[a-zA-Z]+$")) {
-                        //ok
-                        ant = tabela.getItems().get(pos + 3).getLexema();
+                if (ant.matches("\\<|\\>|\\<=|\\>=|\\==")) {
+                    if (prox.matches("^[a-zA-Z]+$") || prox.matches("\\d+")) {
                         prox = tabela.getItems().get(pos + 4).getLexema();
-                        
+                        if (!prox.equals(")")) {
+                            erro += "Parenteses ')' inexistente" + tabela.getItems().get(pos).getLinha() + "\n";
+                        }
+                    } else {
+                        erro += "Variável inexistente para comparação : AQUI" + tabela.getItems().get(pos).getLinha() + "\n";
                     }
+                } else {
+                    erro += "Operador Inexistente na linha : " + tabela.getItems().get(pos).getLinha() + "\n";
                 }
+            } else {
+                erro += "Variável inexistente para comparação : " + tabela.getItems().get(pos).getLinha() + "\n";
             }
         } else {
-
+            erro += "Falta de parenteses na linha : " + tabela.getItems().get(pos).getLinha() + "\n";
         }
-        return "";
+        System.out.println("" + erro);
+        return erro;
     }
 
     public String analise_sintatica(String erro, int pos) {
-        String ant = tabela.getItems().get(pos).getLexema();
+        String pos_atual = tabela.getItems().get(pos).getLexema();
         //String prox = tabela.getItems().get(pos+1).getLexema();
-        if (ant.equals("while")) {
-            erro += enquanto(pos + 1);
-            /*if(prox.equals("("))
-                return analise_sintatica(erro, pos+1);
-            else
-            {
-                erro += "Falta de parenteses";
-                return analise_sintatica(erro, pos+1);
-            }*/
+        if (pos_atual.equals("while")) {
+            return enquanto(pos + 1, erro);
         }
         //sSystem.out.println(""+erro);
-        return erro;
+        if (pos > tabela.getItems().size()) {
+            return erro;
+        }
+        return analise_sintatica(erro, pos + 1);
     }
 
     @FXML
@@ -319,7 +319,8 @@ public class FXMLDocumentController implements Initializable {
         String erro = "";
         tabela.getItems().clear();
         insere_tabela();
-        erro_lexico.setText(analise_sintatica(erro, 0));
-        System.out.println("" + erro);
+        erro = "";
+        erro = analise_sintatica(erro, 0);
+        erro_lexico.setText(erro);
     }
 }
