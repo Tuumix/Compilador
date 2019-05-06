@@ -15,13 +15,15 @@ public class Tabela {
     private int linha;
     private String tipo;
     private String valor;
+    private String type;
 
-    public Tabela(String token, String lexema, int linha, String tipo, String valor) {
+    public Tabela(String token, String lexema, int linha, String tipo, String valor, String type) {
         this.token = token;
         this.lexema = lexema;
         this.linha = linha;
         this.tipo = tipo;
         this.valor = valor;
+        this.type = type;
     }
 
     public String getToken() {
@@ -62,6 +64,14 @@ public class Tabela {
 
     public void setValor(String valor) {
         this.valor = valor;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     
     

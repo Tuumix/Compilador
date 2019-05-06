@@ -110,18 +110,22 @@ public class FXMLDocumentController implements Initializable {
         TableColumn linha = new TableColumn("Linha");
         linha.setCellValueFactory(new PropertyValueFactory<>("linha"));
 
-        TableColumn tipo = new TableColumn("Tipo");
+        TableColumn tipo = new TableColumn("Categoria");
         tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
         TableColumn valor = new TableColumn("Valor");
         valor.setCellValueFactory(new PropertyValueFactory<>("valor"));
 
-        tabela.getColumns().addAll(token, lexema, linha, tipo, valor);
+        TableColumn type = new TableColumn("Tipo");
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        tabela.getColumns().addAll(token, lexema, linha, tipo, valor, type);
 
         token.setMaxWidth(150);
         lexema.setMaxWidth(150);
         linha.setMaxWidth(150);
         tipo.setMaxWidth(150);
+        type.setMaxWidth(150);
 
         insercao_tokens();
         InicializaTextColor();
@@ -235,16 +239,15 @@ public class FXMLDocumentController implements Initializable {
                     entrou = false;
                     for (int k = 0; k < comand_list.size(); k++) {
                         if (coluna[j].contentEquals(comand_list.get(k).getComando())) {
-                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-"));
+                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-","hh"));
                             entrou = true;
                         }
                     }
                     if (!entrou && coluna[j].matches("^[a-zA-Z]+$")) {
-                        System.out.println("" + coluna[j]);
                         if (coluna[j + 1].equals("=")) {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", "")));
+                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""),"inteiro"));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", "-"));
+                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", "-","-"));
                         }
 
                     }
@@ -252,16 +255,16 @@ public class FXMLDocumentController implements Initializable {
                     if (coluna[j].contains(";")) {
                         aux = coluna[j].replace(";", "");
                         if (coluna[j].contains(".")) {
-                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-"));
+                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-","-"));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-","-"));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-"));
+                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-","="));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-","-"));
                         }
                     }
 
                     if (coluna[j].matches("\\d+")) {
-                        tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-"));
+                        tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-","-"));
                     }
 
                 }
@@ -297,7 +300,6 @@ public class FXMLDocumentController implements Initializable {
         } else {
             erro += "Falta de parenteses na linha : " + tabela.getItems().get(pos).getLinha() + "\n";
         }
-        System.out.println("" + erro);
         return erro;
     }
 
