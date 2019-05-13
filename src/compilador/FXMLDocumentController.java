@@ -239,15 +239,21 @@ public class FXMLDocumentController implements Initializable {
                     entrou = false;
                     for (int k = 0; k < comand_list.size(); k++) {
                         if (coluna[j].contentEquals(comand_list.get(k).getComando())) {
-                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-","hh"));
+                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-", "hh"));
                             entrou = true;
                         }
                     }
-                    if (!entrou && coluna[j].matches("^[a-zA-Z]+$")) {
+                    if (!entrou && coluna[j].matches("^[a-zA-Z0-9]+$")) {
+
                         if (coluna[j + 1].equals("=")) {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""),"inteiro"));
+                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "inteiro"));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", "-","-"));
+                            if (coluna[j].matches("\\d+")) {
+                                tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-", "-"));
+                            }
+                            if (coluna[j].matches("[a-zA-Z]+")) {
+                                tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", "-", "-"));
+                            }
                         }
 
                     }
@@ -255,18 +261,13 @@ public class FXMLDocumentController implements Initializable {
                     if (coluna[j].contains(";")) {
                         aux = coluna[j].replace(";", "");
                         if (coluna[j].contains(".")) {
-                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-","-"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-","-"));
+                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-", "-"));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-"));
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-","="));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-","-"));
+                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-", "="));
+                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-"));
                         }
                     }
-
-                    if (coluna[j].matches("\\d+")) {
-                        tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-","-"));
-                    }
-
                 }
             }
         } catch (Exception e) {
