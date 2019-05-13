@@ -16,6 +16,8 @@ public class Tabela {
     private String tipo;
     private String valor;
     private String type;
+    
+    public Tabela(){}
 
     public Tabela(String token, String lexema, int linha, String tipo, String valor, String type) {
         this.token = token;

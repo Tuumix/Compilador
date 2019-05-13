@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,11 +93,12 @@ public class FXMLDocumentController implements Initializable {
     private static final String css_operacao = "operacao";
     @FXML
     private TableView<Tabela> tabela;
-
     @FXML
     private TextArea erro_sin;
     @FXML
     private TextArea erro_lexico;
+    private ArrayList<Tabela> lista_tabela = new ArrayList<>();
+    private Tabela tab = new Tabela();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -223,7 +226,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void insere_tabela() {
-        String codigo = cdArea.getText();
+        String codigo = cdArea.getText(), erro = "";
         codigo = codigo.replaceAll("\\${1}.*\\${1}", "");
         String valor = "-", aux;
         String[] linha = codigo.split("\n");
@@ -237,25 +240,40 @@ public class FXMLDocumentController implements Initializable {
                 lin = i + 1;
                 for (int j = 0; j < coluna.length; j++) {
                     entrou = false;
+
                     for (int k = 0; k < comand_list.size(); k++) {
                         if (coluna[j].contentEquals(comand_list.get(k).getComando())) {
-                            tabela.getItems().add(new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-", "hh"));
+                            tab = new Tabela(comand_list.get(k).getToken(), coluna[j], lin, comand_list.get(k).getTipo(), "-", "-");
+                            lista_tabela.add(tab);
+                            tabela.getItems().add(tab);
                             entrou = true;
                         }
                     }
+
                     if (!entrou && coluna[j].matches("^[a-zA-Z0-9]+$")) {
 
                         if (coluna[j + 1].equals("=")) {
-                            tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "inteiro"));
+                            if (coluna[j + 2].contains(".")) {
+                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "decimal");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                            } else {
+                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "inteiro");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                            }
                         } else {
                             if (coluna[j].matches("\\d+")) {
-                                tabela.getItems().add(new Tabela("token_num", coluna[j], lin, "numero", "-", "-"));
+                                tab = new Tabela("token_num", coluna[j], lin, "numero", "-", "-");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
                             }
                             if (coluna[j].matches("[a-zA-Z]+")) {
-                                tabela.getItems().add(new Tabela("token_id", coluna[j], lin, "variavel", "-", "-"));
+                                tab = new Tabela("token_id", coluna[j], lin, "variavel", "-", "-");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
                             }
                         }
-
                     }
 
                     if (coluna[j].contains(";")) {
@@ -275,10 +293,21 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public String enquanto(int pos, String erro) {
-        String ant = tabela.getItems().get(pos).getLexema();
+    public String enquanto(String[] lin/*int pos, String erro*/) {
+        String erro = "", ant, prox;
+        //Queue<String> fila = new LinkedList<>();
+        for (int i = 0; i < lin.length - 1; i++) {
+            /*if (lin[i] && !lin[i + 1].equals("(")) {
+
+            }*/
+
+        }
+        /*String ant = tabela.getItems().get(pos).getLexema();
         String prox = tabela.getItems().get(pos + 1).getLexema();
 
+        if (ant.equals("(") && prox.matches("^[a-zA-Z]+$") || prox.matches("\\d+")) {
+
+        }
         if (ant.equals("(")) {
             if (prox.matches("^[a-zA-Z]+$") || prox.matches("\\d+")) {
                 ant = tabela.getItems().get(pos + 2).getLexema();
@@ -300,21 +329,32 @@ public class FXMLDocumentController implements Initializable {
             }
         } else {
             erro += "Falta de parenteses na linha : " + tabela.getItems().get(pos).getLinha() + "\n";
-        }
-        return erro;
+        }*/
+        return "";
     }
 
-    public String analise_sintatica(String erro, int pos) {
-        String pos_atual = tabela.getItems().get(pos).getLexema();
-        //String prox = tabela.getItems().get(pos+1).getLexema();
-        if (pos_atual.equals("while")) {
-            return enquanto(pos + 1, erro);
+    public String analise_sintatica(String linha) {
+        String[] col;
+        String ant, prox;
+        col = linha.split(" ");
+        Queue<String> fila = new LinkedList<>();
+        for (int i = 0; i < fila.size(); i++) {
+            fila.add(col[i]);
         }
-        //sSystem.out.println(""+erro);
-        if (pos > tabela.getItems().size()) {
-            return erro;
+
+        while (!fila.isEmpty()) {
+            ant = fila.remove(); //remove o primeiro 
+            prox = fila.remove(); //remove o segundo
+
+            if (ant.equals("token_loop")) {
+
+            }
         }
-        return analise_sintatica(erro, pos + 1);
+        return "";
+    }
+
+    private void verif_begend() {
+
     }
 
     @FXML
@@ -323,7 +363,7 @@ public class FXMLDocumentController implements Initializable {
         tabela.getItems().clear();
         insere_tabela();
         erro = "";
-        erro = analise_sintatica(erro, 0);
+        //erro = analise_sintatica(erro, 0);
         erro_lexico.setText(erro);
     }
 }
