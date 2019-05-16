@@ -6,6 +6,7 @@
 package compilador;
 
 import Tools.Comandos;
+import Tools.Semantica;
 import Tools.Tabela;
 
 import java.net.URL;
@@ -99,6 +100,7 @@ public class FXMLDocumentController implements Initializable {
     private TextArea erro_lexico;
     private ArrayList<Tabela> lista_tabela = new ArrayList<>();
     private Tabela tab = new Tabela();
+    private Semantica sem = new Semantica();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -253,12 +255,12 @@ public class FXMLDocumentController implements Initializable {
                     if (!entrou && coluna[j].matches("^[a-zA-Z0-9]+$")) {
 
                         if (coluna[j + 1].equals("=")) {
-                            if (coluna[j + 2].contains(".")) {
-                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "decimal");
+                            if (coluna[j - 1].equals("double")) {
+                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "double");
                                 lista_tabela.add(tab);
                                 tabela.getItems().add(tab);
                             } else {
-                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "inteiro");
+                                tab = new Tabela("token_id", coluna[j], lin, "variavel", coluna[j + 2].replace(";", ""), "int");
                                 lista_tabela.add(tab);
                                 tabela.getItems().add(tab);
                             }
@@ -279,11 +281,19 @@ public class FXMLDocumentController implements Initializable {
                     if (coluna[j].contains(";")) {
                         aux = coluna[j].replace(";", "");
                         if (coluna[j].contains(".")) {
-                            tabela.getItems().add(new Tabela("token_id_float", aux, lin, "valor decimal", "-", "-"));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-"));
+                            tab = new Tabela("token_id_float", aux, lin, "valor decimal", "-", "-");
+                            lista_tabela.add(tab);
+                            tabela.getItems().add(tab);
+                            tab = new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-");
+                            lista_tabela.add(tab);
+                            tabela.getItems().add(tab);
                         } else {
-                            tabela.getItems().add(new Tabela("token_id", aux, lin, "valor real", "-", "="));
-                            tabela.getItems().add(new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-"));
+                            tab = new Tabela("token_num", aux, lin, "valor real", "-", "valor");
+                            lista_tabela.add(tab);
+                            tabela.getItems().add(tab);
+                            tab = new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-");
+                            lista_tabela.add(tab);
+                            tabela.getItems().add(tab);
                         }
                     }
                 }
@@ -362,8 +372,7 @@ public class FXMLDocumentController implements Initializable {
         String erro = "";
         tabela.getItems().clear();
         insere_tabela();
-        erro = "";
-        //erro = analise_sintatica(erro, 0);
-        erro_lexico.setText(erro);
+        erro_lexico.clear();
+        erro_lexico.setText(sem.analise(lista_tabela));
     }
 }
