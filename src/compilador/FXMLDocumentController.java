@@ -6,7 +6,8 @@
 package compilador;
 
 import Tools.Comandos;
-import Tools.Semantica;
+import Analise.Semantica;
+import Gerador.Intermediario;
 import Tools.Tabela;
 
 import java.net.URL;
@@ -80,27 +81,19 @@ public class FXMLDocumentController implements Initializable {
             + "|(?<" + group_comando + ">" + operacao_padrao + ")"
             + "|(?<" + GROUP_COMMENT + ">" + comentario + ")"
             + "|(?<" + group_dec + ">" + declaracao + ")"
-    //+ "|(?<" + group_inifim + ">" + inicio_fim + ")"
     );
 
-    private static final String CSS_COMMENT = "comment";
-    private static final String CSS_STRING = "string";
-    private static final String CSS_DOT = "dot";
-    private static final String CSS_BRACKET = "colchete";
-    private static final String CSS_BRACE = "brace";
-    private static final String CSS_PAREN = "paren";
-    private static final String css_comando = "comando";
-    private static final String CSS_CORE_ELEMENT = "core-element";
-    private static final String css_operacao = "operacao";
     @FXML
     private TableView<Tabela> tabela;
     @FXML
-    private TextArea erro_sin;
+    private TextArea txt_sintatica;
     @FXML
-    private TextArea erro_lexico;
+    private TextArea txt_semantica;
+
     private ArrayList<Tabela> lista_tabela = new ArrayList<>();
     private Tabela tab = new Tabela();
-    private Semantica sem = new Semantica();
+    private Semantica semantica = new Semantica();
+    private Intermediario intermediario = new Intermediario();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -164,9 +157,9 @@ public class FXMLDocumentController implements Initializable {
             String styleClass
                     = matcher.group(group_tecla) != null ? "comando" //checado
                     : matcher.group(group_parentese) != null ? "parentese" //checado
-                    : matcher.group(group_chave) != null ? CSS_BRACE
+                    : matcher.group(group_chave) != null ? "brace"
                     : matcher.group(group_colchete) != null ? "colchete"
-                    : matcher.group(GROUP_DOT) != null ? CSS_DOT
+                    : matcher.group(GROUP_DOT) != null ? "dot"
                     : matcher.group(group_string) != null ? "string"
                     : matcher.group(GROUP_COMMENT) != null ? "comentario"
                     : matcher.group(group_dec) != null ? "declaracao"
@@ -235,9 +228,11 @@ public class FXMLDocumentController implements Initializable {
         String[] coluna;
         Boolean entrou = false;
         int lin;
+        //System.out.println(""+intermediario.gera_intermediario(codigo));
 
         try {
             for (int i = 0; i < linha.length; i++) {
+                txt_sintatica.setText(intermediario.gera_intermediario(linha[i]));
                 coluna = linha[i].split((" "));
                 lin = i + 1;
                 for (int j = 0; j < coluna.length; j++) {
@@ -369,10 +364,9 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void btnCompilar(ActionEvent event) {
-        String erro = "";
         tabela.getItems().clear();
+        lista_tabela.clear();
         insere_tabela();
-        erro_lexico.clear();
-        erro_lexico.setText(sem.analise(lista_tabela));
+        txt_semantica.setText(semantica.analise(lista_tabela));
     }
 }
