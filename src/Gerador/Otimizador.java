@@ -68,10 +68,10 @@ public class Otimizador {
                     }
                 }
 
-                if (!achou_var) {
+                /*if (!achou_var) {
                     busca = aux;
-                    busca(lin,aux);
-                }
+                    busca(lin, aux);
+                }*/
                 /*divisoria = line[j].split("="); //divide
                 auxiliar = divisoria[1];
                 teste = auxiliar.split(" ");
@@ -93,6 +93,7 @@ public class Otimizador {
                     }
                 }*/
             }
+            //propagacao(lin, line[i]);
         }
         for (int i = 0; i < otimizacao.size(); i++) {
             tudo = tudo.concat(otimizacao.get(i));
@@ -100,9 +101,26 @@ public class Otimizador {
         //System.out.println(""+copia);
         return copia;
     }
-    
-    public void elimina_redundante(String lin){
-        
+
+    public void propagacao(String lin, String instrucao) {
+        String[] c1 = lin.split("\n"), c2;
+        String[] var = instrucao.split("=");
+        Boolean achou = false;
+        String aux = "", aux1 = "";
+
+        for (int i = 0; i < c1.length; i++) {
+            c2 = c1[i].split("=");
+            aux = c1[i];
+            if (c2[0].trim().equals(var[0].trim())) {
+                System.out.println("" + c2[0] + var[0]);
+                achou = true;
+            }
+            if (c2[1].trim().equals(var[0].trim()) && !achou) {
+                System.out.println("");
+                aux1 = aux.replace(var[0], var[1]);
+                copia = copia.replace(aux, aux1);
+            }
+        }
     }
 
     public void busca(String lin, String expressao) {
@@ -124,7 +142,7 @@ public class Otimizador {
                 copia = copia.replace("T1", "");
                 pos = j;
             }
-            System.out.println(""+copia);
+            System.out.println("" + copia);
             copia += "T1 " + "=" + expressao + "\n";
             //copia = copia.replace(aux.get(pos), "");
         }

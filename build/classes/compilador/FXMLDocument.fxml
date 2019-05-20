@@ -80,6 +80,15 @@
                   </AnchorPane>
               </content>
             </Tab>
+            <Tab text="Montador">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea fx:id="txt_montador" prefHeight="119.0" prefWidth="1018.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>

@@ -6,11 +6,13 @@
             <file>file:/Users/hiroshi/Documents/compilador/src/Analise/Lexico.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Analise/Semantica.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Tools/Quadrupula.java</file>
+            <file>file:/Users/hiroshi/Documents/compilador/src/Gerador/Montador.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Tools/Tabela.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/compilador/FXMLDocumentController.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Tools/estilos.css</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/compilador/Compilador.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Tools/Variavel.java</file>
+            <file>file:/Users/hiroshi/Documents/compilador/src/Gerador/Otimizador.java</file>
             <file>file:/Users/hiroshi/Documents/compilador/src/Gerador/Intermediario.java</file>
         </group>
     </open-files>

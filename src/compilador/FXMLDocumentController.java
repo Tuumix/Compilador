@@ -8,6 +8,7 @@ package compilador;
 import Tools.Comandos;
 import Analise.Semantica;
 import Gerador.Intermediario;
+import Gerador.Montador;
 import Gerador.Otimizador;
 import Tools.Tabela;
 
@@ -99,10 +100,13 @@ public class FXMLDocumentController implements Initializable {
     private Otimizador otimizador = new Otimizador();
     private String ger_interm = "";
     private int retorno = 0;
+    private Montador montador = new Montador();
     @FXML
     private TextArea txt_intermediario;
     @FXML
     private TextArea txt_otimizacao;
+    @FXML
+    private TextArea txt_montador;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -145,7 +149,7 @@ public class FXMLDocumentController implements Initializable {
                 + "\n"
                 + "    while ( i <= 10 )\n"
                 + "    {\n"
-                + "        i += 1;\n"
+                + "        i = x + b;\n"
                 + "    }\n"
                 + "}");
     }
@@ -398,5 +402,6 @@ public class FXMLDocumentController implements Initializable {
         txt_sintatica.setText("");
         txt_intermediario.setText(ger_interm);
         txt_otimizacao.setText(otimizador.gera_otimizacao(ger_interm));
+        txt_montador.setText(montador.gera_machineCode(lista_tabela));
     }
 }
