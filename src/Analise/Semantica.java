@@ -47,11 +47,11 @@ public class Semantica {
         }
 
         for (int j = 0; j < var.size(); j++) {
+            achou = false;
             for (int i = 1; i < tab.size(); i++) {
                 ant = tab.get(i - 1);
                 atual = tab.get(i);
-                if ((ant.getLexema().equals("int") && atual.getLexema().equals(atual)) || (ant.getLexema().equals("double") && atual.getLexema().equals(atual))) {
-                    //cont++;
+                if ((ant.getLexema().equals("int") && atual.getLexema().equals(var.get(j).getVariavel())) || (ant.getLexema().equals("double") && atual.getLexema().equals(var.get(j).getVariavel()))) {
                     achou = true;
                 }
             }

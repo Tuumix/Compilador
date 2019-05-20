@@ -8,6 +8,7 @@ package compilador;
 import Tools.Comandos;
 import Analise.Semantica;
 import Gerador.Intermediario;
+import Gerador.Otimizador;
 import Tools.Tabela;
 
 import java.net.URL;
@@ -24,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -94,6 +96,13 @@ public class FXMLDocumentController implements Initializable {
     private Tabela tab = new Tabela();
     private Semantica semantica = new Semantica();
     private Intermediario intermediario = new Intermediario();
+    private Otimizador otimizador = new Otimizador();
+    private String ger_interm = "";
+    private int retorno = 0;
+    @FXML
+    private TextArea txt_intermediario;
+    @FXML
+    private TextArea txt_otimizacao;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -131,6 +140,8 @@ public class FXMLDocumentController implements Initializable {
         cdArea.replaceText("begin\n"
                 + "{\n"
                 + "    int i = 0; int b = 0;\n"
+                + "    x = a + b;\n"
+                + "    y = a + b;\n"
                 + "\n"
                 + "    while ( i <= 10 )\n"
                 + "    {\n"
@@ -180,7 +191,8 @@ public class FXMLDocumentController implements Initializable {
         comand_list.add(new Comandos("<=", "operação comparação", "token_comp"));
         comand_list.add(new Comandos(">=", "operação comparação", "token_comp"));
         comand_list.add(new Comandos("!=", "operação comparação", "token_comp"));
-        comand_list.add(new Comandos("+", "operação comparação", "token_opr"));
+        comand_list.add(new Comandos("+", "operação soma", "token_opr"));
+        comand_list.add(new Comandos("*", "operação mult", "token_opr"));
         comand_list.add(new Comandos("-", "operação comparação", "token_opr"));
         comand_list.add(new Comandos("+=", "operação incremento", "token_opr"));
         comand_list.add(new Comandos("==", "operação comparação", "token_comp"));
@@ -227,12 +239,15 @@ public class FXMLDocumentController implements Initializable {
         String[] linha = codigo.split("\n");
         String[] coluna;
         Boolean entrou = false;
-        int lin;
+        int lin, pos = 0;
+        String cod_inter = "";
         //System.out.println(""+intermediario.gera_intermediario(codigo));
 
         try {
             for (int i = 0; i < linha.length; i++) {
-                txt_sintatica.setText(intermediario.gera_intermediario(linha[i]));
+                if(!intermediario.gera_intermediario(linha[i],pos).equals("") || intermediario.gera_intermediario(linha[i],pos).indexOf("if") != -1|| intermediario.gera_intermediario(linha[i],pos).indexOf("while") != -1)
+                    pos++;
+                ger_interm += intermediario.gera_intermediario(linha[i],pos);
                 coluna = linha[i].split((" "));
                 lin = i + 1;
                 for (int j = 0; j < coluna.length; j++) {
@@ -283,12 +298,21 @@ public class FXMLDocumentController implements Initializable {
                             lista_tabela.add(tab);
                             tabela.getItems().add(tab);
                         } else {
-                            tab = new Tabela("token_num", aux, lin, "valor real", "-", "valor");
-                            lista_tabela.add(tab);
-                            tabela.getItems().add(tab);
-                            tab = new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-");
-                            lista_tabela.add(tab);
-                            tabela.getItems().add(tab);
+                            if (aux.matches("[a-zA-Z]+")) {
+                                tab = new Tabela("token_id", aux, lin, "variavel", "-", "-");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                                tab = new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                            } else {
+                                tab = new Tabela("token_num", aux, lin, "valor real", "-", "valor");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                                tab = new Tabela("token_fimlinha", ";", lin, "ponto e virgula", "-", "-");
+                                lista_tabela.add(tab);
+                                tabela.getItems().add(tab);
+                            }
                         }
                     }
                 }
@@ -364,9 +388,15 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void btnCompilar(ActionEvent event) {
+        retorno = 0;
         tabela.getItems().clear();
         lista_tabela.clear();
+        ger_interm = "";
+        txt_sintatica.setText("");
         insere_tabela();
         txt_semantica.setText(semantica.analise(lista_tabela));
+        txt_sintatica.setText("");
+        txt_intermediario.setText(ger_interm);
+        txt_otimizacao.setText(otimizador.gera_otimizacao(ger_interm));
     }
 }
